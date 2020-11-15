@@ -1,0 +1,93 @@
+2020-11-15 17:28:49.072 INFO data_gathering - get_tournaments_url: Started scraping tournaments at https://magic.gg/decklists
+2020-11-15 17:28:52.075 ERROR data_gathering - get_tournaments_url: magic site currently not handled (tournaments)
+2020-11-15 17:28:52.075 INFO data_gathering - get_tournaments_url: Extracted 0 tournaments urls from magic
+2020-11-15 17:28:56.086 INFO data_gathering - get_tournaments_url: Started scraping tournaments at https://mtgmelee.com/Decklists/Standard
+2020-11-15 17:29:02.099 INFO data_gathering - get_tournaments_url: Extracted 0 tournaments urls from mtgmelee
+2020-11-15 17:30:30.774 INFO data_gathering - get_tournaments_url: Started scraping tournaments at https://magic.gg/decklists
+2020-11-15 17:30:33.780 ERROR data_gathering - get_tournaments_url: magic site currently not handled (tournaments)
+2020-11-15 17:30:33.780 INFO data_gathering - get_tournaments_url: Extracted 0 tournaments urls from magic
+2020-11-15 17:30:36.985 INFO data_gathering - get_tournaments_url: Started scraping tournaments at https://mtgmelee.com/Decklists/Standard
+2020-11-15 17:30:44.211 INFO data_gathering - get_tournaments_url: Extracted 2 tournaments urls from mtgmelee
+2020-11-15 17:30:45.958 INFO data_gathering - get_decklists: Started scraping decklists from tournament https://mtgmelee.com/Tournament/View/3857
+2020-11-15 17:30:55.541 INFO data_gathering - get_decklists: Added decklist 1/52 from https://mtgmelee.com/Decklist/View/70705
+2020-11-15 17:31:00.525 INFO data_gathering - get_decklists: Added decklist 2/52 from https://mtgmelee.com/Decklist/View/70264
+2020-11-15 17:31:04.618 INFO data_gathering - get_decklists: Added decklist 3/52 from https://mtgmelee.com/Decklist/View/70774
+2020-11-15 17:31:08.762 INFO data_gathering - get_decklists: Added decklist 4/52 from https://mtgmelee.com/Decklist/View/70956
+2020-11-15 17:31:13.453 INFO data_gathering - get_decklists: Added decklist 5/52 from https://mtgmelee.com/Decklist/View/70870
+2020-11-15 17:31:19.095 INFO data_gathering - get_decklists: Added decklist 6/52 from https://mtgmelee.com/Decklist/View/70909
+2020-11-15 17:31:23.140 INFO data_gathering - get_decklists: Added decklist 7/52 from https://mtgmelee.com/Decklist/View/70452
+2020-11-15 17:31:27.203 INFO data_gathering - get_decklists: Added decklist 8/52 from https://mtgmelee.com/Decklist/View/69904
+2020-11-15 17:31:31.304 INFO data_gathering - get_decklists: Added decklist 9/52 from https://mtgmelee.com/Decklist/View/70857
+2020-11-15 17:31:35.654 INFO data_gathering - get_decklists: Added decklist 10/52 from https://mtgmelee.com/Decklist/View/70391
+2020-11-15 17:31:39.481 INFO data_gathering - get_decklists: Added decklist 11/52 from https://mtgmelee.com/Decklist/View/70761
+2020-11-15 17:31:43.641 INFO data_gathering - get_decklists: Added decklist 12/52 from https://mtgmelee.com/Decklist/View/70795
+2020-11-15 17:31:47.895 INFO data_gathering - get_decklists: Added decklist 13/52 from https://mtgmelee.com/Decklist/View/70817
+2020-11-15 17:31:51.960 INFO data_gathering - get_decklists: Added decklist 14/52 from https://mtgmelee.com/Decklist/View/70709
+2020-11-15 17:31:56.062 INFO data_gathering - get_decklists: Added decklist 15/52 from https://mtgmelee.com/Decklist/View/70377
+2020-11-15 17:32:00.273 INFO data_gathering - get_decklists: Added decklist 16/52 from https://mtgmelee.com/Decklist/View/70779
+2020-11-15 17:32:04.520 INFO data_gathering - get_decklists: Added decklist 17/52 from https://mtgmelee.com/Decklist/View/70421
+2020-11-15 17:32:09.005 INFO data_gathering - get_decklists: Added decklist 18/52 from https://mtgmelee.com/Decklist/View/70741
+2020-11-15 17:32:13.244 INFO data_gathering - get_decklists: Added decklist 19/52 from https://mtgmelee.com/Decklist/View/70773
+2020-11-15 17:32:17.513 INFO data_gathering - get_decklists: Added decklist 20/52 from https://mtgmelee.com/Decklist/View/70977
+2020-11-15 17:32:22.237 INFO data_gathering - get_decklists: Added decklist 21/52 from https://mtgmelee.com/Decklist/View/70415
+2020-11-15 17:32:26.116 INFO data_gathering - get_decklists: Added decklist 22/52 from https://mtgmelee.com/Decklist/View/70960
+2020-11-15 17:32:30.560 INFO data_gathering - get_decklists: Added decklist 23/52 from https://mtgmelee.com/Decklist/View/70907
+2020-11-15 17:32:34.978 INFO data_gathering - get_decklists: Added decklist 24/52 from https://mtgmelee.com/Decklist/View/70379
+2020-11-15 17:32:41.505 INFO data_gathering - get_decklists: Added decklist 25/52 from https://mtgmelee.com/Decklist/View/70877
+2020-11-15 17:32:46.034 INFO data_gathering - get_decklists: Added decklist 26/52 from https://mtgmelee.com/Decklist/View/70956
+2020-11-15 17:32:50.855 INFO data_gathering - get_decklists: Added decklist 27/52 from https://mtgmelee.com/Decklist/View/70918
+2020-11-15 17:32:55.813 INFO data_gathering - get_decklists: Added decklist 28/52 from https://mtgmelee.com/Decklist/View/70888
+2020-11-15 17:33:00.201 INFO data_gathering - get_decklists: Added decklist 29/52 from https://mtgmelee.com/Decklist/View/70927
+2020-11-15 17:33:04.821 INFO data_gathering - get_decklists: Added decklist 30/52 from https://mtgmelee.com/Decklist/View/70214
+2020-11-15 17:33:08.693 INFO data_gathering - get_decklists: Added decklist 31/52 from https://mtgmelee.com/Decklist/View/70790
+2020-11-15 17:33:13.608 INFO data_gathering - get_decklists: Added decklist 32/52 from https://mtgmelee.com/Decklist/View/70928
+2020-11-15 17:33:17.736 INFO data_gathering - get_decklists: Added decklist 33/52 from https://mtgmelee.com/Decklist/View/70906
+2020-11-15 17:33:22.309 INFO data_gathering - get_decklists: Added decklist 34/52 from https://mtgmelee.com/Decklist/View/70889
+2020-11-15 17:33:27.431 INFO data_gathering - get_decklists: Added decklist 35/52 from https://mtgmelee.com/Decklist/View/70052
+2020-11-15 17:33:32.153 INFO data_gathering - get_decklists: Added decklist 36/52 from https://mtgmelee.com/Decklist/View/70877
+2020-11-15 17:33:36.240 INFO data_gathering - get_decklists: Added decklist 37/52 from https://mtgmelee.com/Decklist/View/70870
+2020-11-15 17:33:40.952 INFO data_gathering - get_decklists: Added decklist 38/52 from https://mtgmelee.com/Decklist/View/70740
+2020-11-15 17:33:44.802 INFO data_gathering - get_decklists: Added decklist 39/52 from https://mtgmelee.com/Decklist/View/70895
+2020-11-15 17:33:48.774 INFO data_gathering - get_decklists: Added decklist 40/52 from https://mtgmelee.com/Decklist/View/70812
+2020-11-15 17:33:52.884 INFO data_gathering - get_decklists: Added decklist 41/52 from https://mtgmelee.com/Decklist/View/70799
+2020-11-15 17:33:56.901 INFO data_gathering - get_decklists: Added decklist 42/52 from https://mtgmelee.com/Decklist/View/70789
+2020-11-15 17:34:00.694 INFO data_gathering - get_decklists: Added decklist 43/52 from https://mtgmelee.com/Decklist/View/70264
+2020-11-15 17:34:04.579 INFO data_gathering - get_decklists: Added decklist 44/52 from https://mtgmelee.com/Decklist/View/70958
+2020-11-15 17:34:09.248 INFO data_gathering - get_decklists: Added decklist 45/52 from https://mtgmelee.com/Decklist/View/70795
+2020-11-15 17:34:13.497 INFO data_gathering - get_decklists: Added decklist 46/52 from https://mtgmelee.com/Decklist/View/70977
+2020-11-15 17:34:18.999 INFO data_gathering - get_decklists: Added decklist 47/52 from https://mtgmelee.com/Decklist/View/70957
+2020-11-15 17:34:23.082 INFO data_gathering - get_decklists: Added decklist 48/52 from https://mtgmelee.com/Decklist/View/70939
+2020-11-15 17:34:27.220 INFO data_gathering - get_decklists: Added decklist 49/52 from https://mtgmelee.com/Decklist/View/70843
+2020-11-15 17:34:31.116 INFO data_gathering - get_decklists: Added decklist 50/52 from https://mtgmelee.com/Decklist/View/70817
+2020-11-15 17:34:36.126 INFO data_gathering - get_decklists: Added decklist 51/52 from https://mtgmelee.com/Decklist/View/70742
+2020-11-15 17:34:40.180 INFO data_gathering - get_decklists: Added decklist 52/52 from https://mtgmelee.com/Decklist/View/70822
+2020-11-15 17:34:40.246 INFO data_gathering - get_decklists: Extracted 52 decklists from https://mtgmelee.com/Tournament/View/3857
+2020-11-15 17:34:41.740 INFO data_gathering - get_decklists: Started scraping decklists from tournament https://mtgmelee.com/Tournament/View/4145
+2020-11-15 17:34:50.631 INFO data_gathering - get_decklists: Added decklist 1/27 from https://mtgmelee.com/Decklist/View/69557
+2020-11-15 17:34:54.669 INFO data_gathering - get_decklists: Added decklist 2/27 from https://mtgmelee.com/Decklist/View/69587
+2020-11-15 17:34:59.139 INFO data_gathering - get_decklists: Added decklist 3/27 from https://mtgmelee.com/Decklist/View/69527
+2020-11-15 17:35:03.291 INFO data_gathering - get_decklists: Added decklist 4/27 from https://mtgmelee.com/Decklist/View/69442
+2020-11-15 17:35:07.719 INFO data_gathering - get_decklists: Added decklist 5/27 from https://mtgmelee.com/Decklist/View/69607
+2020-11-15 17:35:11.608 INFO data_gathering - get_decklists: Added decklist 6/27 from https://mtgmelee.com/Decklist/View/69567
+2020-11-15 17:35:32.742 INFO data_gathering - get_decklists: Added decklist 7/27 from https://mtgmelee.com/Decklist/View/69534
+2020-11-15 17:35:36.852 INFO data_gathering - get_decklists: Added decklist 8/27 from https://mtgmelee.com/Decklist/View/69596
+2020-11-15 17:35:40.902 INFO data_gathering - get_decklists: Added decklist 9/27 from https://mtgmelee.com/Decklist/View/69605
+2020-11-15 17:35:45.069 INFO data_gathering - get_decklists: Added decklist 10/27 from https://mtgmelee.com/Decklist/View/69548
+2020-11-15 17:35:49.276 INFO data_gathering - get_decklists: Added decklist 11/27 from https://mtgmelee.com/Decklist/View/69555
+2020-11-15 17:35:53.666 INFO data_gathering - get_decklists: Added decklist 12/27 from https://mtgmelee.com/Decklist/View/69606
+2020-11-15 17:35:57.468 INFO data_gathering - get_decklists: Added decklist 13/27 from https://mtgmelee.com/Decklist/View/69538
+2020-11-15 17:36:01.538 INFO data_gathering - get_decklists: Added decklist 14/27 from https://mtgmelee.com/Decklist/View/69553
+2020-11-15 17:36:06.782 INFO data_gathering - get_decklists: Added decklist 15/27 from https://mtgmelee.com/Decklist/View/69604
+2020-11-15 17:36:11.051 INFO data_gathering - get_decklists: Added decklist 16/27 from https://mtgmelee.com/Decklist/View/69551
+2020-11-15 17:36:15.273 INFO data_gathering - get_decklists: Added decklist 17/27 from https://mtgmelee.com/Decklist/View/69441
+2020-11-15 17:36:19.769 INFO data_gathering - get_decklists: Added decklist 18/27 from https://mtgmelee.com/Decklist/View/69603
+2020-11-15 17:36:23.955 INFO data_gathering - get_decklists: Added decklist 19/27 from https://mtgmelee.com/Decklist/View/69462
+2020-11-15 17:36:28.297 INFO data_gathering - get_decklists: Added decklist 20/27 from https://mtgmelee.com/Decklist/View/69460
+2020-11-15 17:36:32.424 INFO data_gathering - get_decklists: Added decklist 21/27 from https://mtgmelee.com/Decklist/View/69592
+2020-11-15 17:36:36.725 INFO data_gathering - get_decklists: Added decklist 22/27 from https://mtgmelee.com/Decklist/View/69482
+2020-11-15 17:36:40.742 INFO data_gathering - get_decklists: Added decklist 23/27 from https://mtgmelee.com/Decklist/View/69599
+2020-11-15 17:36:44.900 INFO data_gathering - get_decklists: Added decklist 24/27 from https://mtgmelee.com/Decklist/View/69561
+2020-11-15 17:36:48.896 INFO data_gathering - get_decklists: Added decklist 25/27 from https://mtgmelee.com/Decklist/View/69458
+2020-11-15 17:36:52.928 INFO data_gathering - get_decklists: Added decklist 26/27 from https://mtgmelee.com/Decklist/View/69557
+2020-11-15 17:36:57.278 INFO data_gathering - get_decklists: Added decklist 27/27 from https://mtgmelee.com/Decklist/View/69587
+2020-11-15 17:36:57.366 INFO data_gathering - get_decklists: Extracted 27 decklists from https://mtgmelee.com/Tournament/View/4145
