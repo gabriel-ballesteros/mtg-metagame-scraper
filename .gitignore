@@ -5,3 +5,4 @@ data/raw/.DS_Store
 src/.DS_Store
 .DS_Store
 .vscode
+.env

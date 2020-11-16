@@ -26,7 +26,7 @@ def get_tournaments_url(url, driver, params):
         for tournament in tournaments:
             tournaments_list.append(tournament.get_attribute("href"))
     elif site == 'mtgmelee':
-        time.sleep(2)
+        time.sleep(5)
         tournaments = WebDriverWait(driver, timeout=20, poll_frequency=1).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'tr[role="row"]')))
         tournaments = tournaments[1:]
         for tournament in tournaments:

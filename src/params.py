@@ -1,4 +1,4 @@
-# from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv, find_dotenv
 import os
 from selenium.webdriver.chrome.options import Options
 
@@ -32,7 +32,7 @@ class Params:
     # pre-requeqs
 
     # magically load environment variables from any .env files
-    # load_dotenv(os.path.abspath('../.env'))
+    load_dotenv(os.path.abspath('../.env'))
 
     # parameters
     sites_to_scrape = ['https://magic.gg/decklists', 'https://mtgmelee.com/Decklists/Standard']
@@ -59,7 +59,7 @@ class Params:
     force_execution = True
 
     # Database connection params
-    user = 'postgres'  # find_dotenv('DB_USERNAME')
-    password = 'admin'  # find_dotenv('DB_PASSWORD')
+    user = find_dotenv('DB_USERNAME')
+    password = find_dotenv('DB_PASSWORD')
     host = 'localhost'
     database = "decks"
