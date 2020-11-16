@@ -2,3 +2,5 @@ sphinx-rtd-theme
 python-dotenv
 psycopg2
 SQLAlchemy
+python-slugify
+selenium

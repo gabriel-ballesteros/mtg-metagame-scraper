@@ -43,7 +43,7 @@ class Params:
 
     chrome_options = Options()
     chrome_options.headless = True
-    chrome_path = find_dotenv ('CHROME_PATH')
+    chrome_path = find_dotenv('CHROME_PATH')
 
     scryfall_exact_name_url = 'https://api.scryfall.com/cards/named?exact='
 
