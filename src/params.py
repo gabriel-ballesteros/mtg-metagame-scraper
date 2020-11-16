@@ -38,14 +38,19 @@ class Params:
     sites_to_scrape = ['https://magic.gg/decklists', 'https://mtgmelee.com/Decklists/Standard']
     mtgmelee_orgs = ['star city games', 'channelfireball']
 
+    top_d_cut = 16
+    min_t_players = 64
+
     chrome_options = Options()
     chrome_options.headless = True
     chrome_path = '/Users/elros/chromedriver'
 
-    raw_data = os.path.abspath('../data/raw/')
-    external_data = os.path.abspath('../data/external/')
-    processed_data = os.path.abspath('../data/processed/')
-    intermediate_data = os.path.abspath('../data/intermediate/')
+    scryfall_exact_name_url = 'https://api.scryfall.com/cards/named?exact='
+
+    raw_data = ('../data/raw/')
+    external_data = ('../data/external/')
+    processed_data = ('../data/processed/')
+    intermediate_data = ('../data/intermediate/')
 
     log_name = os.path.abspath('../log/dump.log')
 
