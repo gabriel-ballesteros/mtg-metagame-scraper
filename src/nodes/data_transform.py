@@ -43,10 +43,12 @@ def update(client, params):
     file_list = os.listdir(params.raw_data)
     if '.DS_Store' in file_list:
         file_list.remove('.DS_Store')
-    for index, decklist in enumerate([normalize_decklist(params.raw_data, filename) for filename in file_list], 1):
+    for filename in file_list:
+        decklist = normalize_decklist(params.raw_data, filename)
         cards = []
-        logger.info('Saving json file at ' + params.processed_data + decklist[0] + '_' + decklist[1] + '_' + str(index) + '.json')
-        f = open(params.processed_data + decklist[0] + '_' + decklist[1] + '_' + str(index) + '.json', 'w')
+        index = re.search('.+_(\d+).txt', filename)
+        logger.info('Saving json file at ' + params.processed_data + decklist[0] + '_' + decklist[1] + '_' + index + '.json')
+        f = open(params.processed_data + decklist[0] + '_' + decklist[1] + '_' + index + '.json', 'w')
         for card in decklist[2]:
             response = requests.get(params.scryfall_exact_name_url + card[1]).json()
             time.sleep(0.2)
