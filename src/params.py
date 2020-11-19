@@ -1,6 +1,7 @@
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 import os
 from selenium.webdriver.chrome.options import Options
+from pathlib import Path
 
 
 class Params:
@@ -32,18 +33,19 @@ class Params:
     # pre-requeqs
 
     # magically load environment variables from any .env files
-    load_dotenv(os.path.abspath('../.env'))
+    env_path = Path('.') / '.env'
+    load_dotenv(dotenv_path=env_path)
 
     # parameters
     sites_to_scrape = ['https://magic.gg/decklists', 'https://mtgmelee.com/Decklists/Standard']
     mtgmelee_orgs = ['star city games', 'channelfireball']
 
     top_d_cut = 16
-    min_t_players = 64
+    min_t_players = 32
 
     chrome_options = Options()
     chrome_options.headless = True
-    chrome_path = find_dotenv('CHROME_PATH')
+    chrome_path = os.getenv('CHROME_PATH')
 
     scryfall_exact_name_url = 'https://api.scryfall.com/cards/named?exact='
 
@@ -59,7 +61,7 @@ class Params:
     force_execution = True
 
     # Database connection params
-    user = find_dotenv('DB_USERNAME')
-    password = find_dotenv('DB_PASSWORD')
+    user = os.getenv('DB_USERNAME')
+    password = os.getenv('DB_PASSWORD')
     host = 'localhost'
-    database = "decks"
+    database = os.getenv('DATABASE')

@@ -7,8 +7,38 @@ from selenium.webdriver.common.keys import Keys
 import re
 import time
 from slugify import slugify
+import datetime
 
 logger = logging.getLogger('nodes.data_gathering')
+
+
+def normalize_date(site, s):
+    if site == 'magic':
+        s_date = datetime.datetime.strptime(s, '%B %d, %Y')
+    elif site == 'mtgmelee':
+        d = re.search('(.+) at .+', s).group(1)
+        today = datetime.date.today()
+        if (d == 'Today'):
+            s_date = today
+        elif (d == 'Yesterday'):
+            s_date = today - datetime.timedelta(1)
+        elif (d == 'Last Monday'):
+            s_date = today + datetime.timedelta(days=today.weekday())
+        elif (d == 'Last Tuesday'):
+            s_date = today + datetime.timedelta(days=today.weekday() + 1)
+        elif (d == 'Last Wednesday'):
+            s_date = today + datetime.timedelta(days=today.weekday() + 2)
+        elif (d == 'Last Thursday'):
+            s_date = today + datetime.timedelta(days=today.weekday() + 3)
+        elif (d == 'Last Friday'):
+            s_date = today + datetime.timedelta(days=today.weekday() + 4)
+        elif (d == 'Last Saturday'):
+            s_date = today + datetime.timedelta(days=today.weekday() + 5)
+        elif (d == 'Last Sunday'):
+            s_date = today + datetime.timedelta(days=today.weekday() + 6)
+        else:
+            s_date = datetime.datetime.strptime(d, '%m/%d/%y')
+    return s_date.strftime('%Y-%m-%d')
 
 
 def get_tournaments_url(url, driver, params):
@@ -24,17 +54,24 @@ def get_tournaments_url(url, driver, params):
         time.sleep(5)
         tournaments = WebDriverWait(driver, timeout=20, poll_frequency=1).until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'css-ajYO7')))
         for tournament in tournaments:
-            tournaments_list.append(tournament.get_attribute("href"))
+            date = normalize_date(site, tournament.find_element_by_class_name('css-3xJlN').text)
+            tournaments_list.append([date, tournament.get_attribute("href")])
     elif site == 'mtgmelee':
-        time.sleep(5)
+        time.sleep(8)
+        # size_selector = WebDriverWait(driver, timeout=20, poll_frequency=1).until(EC.presence_of_element_located((By.CLASS_NAME, 'select2-selection')))
+        # size_selector.click()
+        # time.sleep(1)
+        # per_page_500 = WebDriverWait(driver, timeout=20, poll_frequency=1).until(EC.presence_of_element_located((By.XPATH, '/html/body/span[2]/span/span[2]/ul/li[5]')))
+        # per_page_500.click()
+        # time.sleep(10)
         tournaments = WebDriverWait(driver, timeout=20, poll_frequency=1).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'tr[role="row"]')))
         tournaments = tournaments[1:]
         for tournament in tournaments:
-            # if tournament.find_elements_by_tag_name('a')[1].text.lower() in params.mtgmelee_orgs:
             if tournament.find_elements_by_tag_name('td')[3].text.lower() == 'ended' and int(tournament.find_elements_by_tag_name('td')[6].text) >= params.min_t_players:
-                tournaments_list.append(tournament.find_element_by_css_selector('a[data-type="tournament"]').get_attribute("href"))
+                date = normalize_date(site, tournament.find_element_by_class_name('StartDate-column').text)
+                tournaments_list.append([date, tournament.find_element_by_css_selector('a[data-type="tournament"]').get_attribute("href")])
     else:
-        logger.error(site + ' site currently not handled (tournaments)')
+        logger.warning(site + ' site currently not handled (tournaments)')
 
     logger.info('Extracted ' + str(len(tournaments_list)) + ' tournaments urls from ' + site)
     return tournaments_list
@@ -50,7 +87,6 @@ def get_decklists(url, driver, params):
         decks = WebDriverWait(driver, timeout=20, poll_frequency=1).until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'css-163ya')))
         for index, deck in enumerate(decks, 1):
             decks_list.append(deck.text)
-            # logger.info('Added decklist ' + str(index) + '/' + str(len(decks)) + ' from ' + url)
     elif site == 'mtgmelee':
         decks_urls = WebDriverWait(driver, timeout=20, poll_frequency=1).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'a[data-type="decklist"]')))
         for index, deck_url in enumerate(decks_urls[:params.top_d_cut], 1):
@@ -61,11 +97,10 @@ def get_decklists(url, driver, params):
             driver.get(aux_url)
             time.sleep(2)
             decks_list.append(driver.find_element_by_xpath('/html/body/div[1]/div[4]/div[1]/div[1]/div[2]/div[1]').text)
-            # logger.info('Added decklist ' + str(index) + '/' + str(min(len(decks_urls), params.top_d_cut)) + ' from ' + aux_url)
             driver.close()
             driver.switch_to_window(main_window)
     else:
-        logger.error(site + ' site currently not handled (decklists)')
+        logger.warning(site + ' site currently not handled (decklists)')
     logger.info('Extracted ' + str(len(decks_list)) + ' decklists from ' + url)
     return site, decks_list
 
@@ -76,9 +111,11 @@ def update(client, params):
     driver.implicitly_wait(10)
     for site in params.sites_to_scrape:
         for tournament_url in get_tournaments_url(site, driver, params):
-            site, decklists = get_decklists(tournament_url, driver, params)
+            tournament_date = tournament_url[0]
+            tournament_link = tournament_url[1]
+            site, decklists = get_decklists(tournament_link, driver, params)
             for d_index, deck in enumerate(decklists, 1):
-                f = open(params.raw_data + site + '_' + slugify(re.search('\.\w+/(.*)', tournament_url).group(1)) + '_' + str(d_index) + ".txt", "w")
+                f = open(params.raw_data + site + '_' + tournament_date + '_' + slugify(re.search('\.\w+/(.*)', tournament_link).group(1)) + '_' + str(d_index) + ".txt", "w")
                 f.write(deck)
                 f.close()
     driver.quit()

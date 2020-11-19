@@ -46,9 +46,10 @@ def update(client, params):
     for filename in file_list:
         decklist = normalize_decklist(params.raw_data, filename)
         cards = []
-        index = re.search('.+_(\d+).txt', filename)
-        logger.info('Saving json file at ' + params.processed_data + decklist[0] + '_' + decklist[1] + '_' + index + '.json')
-        f = open(params.processed_data + decklist[0] + '_' + decklist[1] + '_' + index + '.json', 'w')
+        index = re.search('.+_(\d+).txt', filename).group(1)
+        name = decklist[0] + '_' + decklist[1] + '_' + index + '.json'
+        logger.info('Saving json file at ' + params.processed_data + name)
+        f = open(params.processed_data + name, 'w')
         for card in decklist[2]:
             response = requests.get(params.scryfall_exact_name_url + card[1]).json()
             time.sleep(0.2)
