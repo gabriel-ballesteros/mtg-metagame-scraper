@@ -14,7 +14,7 @@ Load each deck and card from the json files into the postgreSQL database.
 Expose the decks conforming the metagame in the given time range and its variables, grouped by categories.
 
 # Presentation
-
+## Color distribution
 ![Color share](viz/decks_colors.png)
 ![Cards by set](viz/sets_count.png)
 ![Cards by type](viz/types_count.png)
