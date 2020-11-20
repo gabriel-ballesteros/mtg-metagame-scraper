@@ -47,7 +47,7 @@ class Params:
     chrome_options.headless = True
     chrome_path = os.getenv('CHROME_PATH')
 
-    scryfall_exact_name_url = 'https://api.scryfall.com/cards/named?exact='
+    scryfall_collection_url = 'https://api.scryfall.com/cards/collection'
 
     raw_data = ('../data/raw/')
     external_data = ('../data/external/')
