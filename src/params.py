@@ -64,4 +64,4 @@ class Params:
     user = os.getenv('DB_USERNAME')
     password = os.getenv('DB_PASSWORD')
     host = 'localhost'
-    database = os.getenv('DATABASE')
+    database = os.getenv('MTG_DATABASE')

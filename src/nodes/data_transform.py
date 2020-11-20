@@ -48,7 +48,8 @@ def update(client, params):
     for filename in file_list:
         decklist = normalize_decklist(params.raw_data, filename)
         index = re.search('.+_(\d+).txt', filename).group(1)
-        name = decklist[0] + '_' + decklist[1] + '_' + index + '.json'
+        date = re.search('.+_(\d{4}-\d{2}-\d{2})_.+', filename).group(1)
+        name = decklist[0] + '_' + date + '_' + decklist[1] + '_' + index + '.json'
         # logger.info('Saving json file at ' + params.processed_data + name)
         f = open(params.processed_data + name, 'w')
         dic = {'name' + str(index): i for index, i in enumerate([x[1] for x in decklist[2]])}

@@ -39,14 +39,14 @@ def process(client, params):
     """
     data_preparation.run(client, params)
 
-    #if not data_gathering.done(client, params):
-    #    data_gathering.update(client, params)
+    if not data_gathering.done(client, params):
+        data_gathering.update(client, params)
 
     if not data_transform.done(client, params):
         data_transform.update(client, params)
 
-    #if not data_storage.done(client, params):
-    #    data_storage.update(client, params)
+    if not data_storage.done(client, params):
+        data_storage.update(client, params)
 
     if not data_viz.done(client, params):
         data_viz.update(client, params)
