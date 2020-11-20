@@ -12,3 +12,12 @@ Normalize the data into json files at data/processed with the same format and ad
 Load each deck and card from the json files into the postgreSQL database.
 ## :bar_chart: Visualization
 Expose the decks conforming the metagame in the given time range and its variables, grouped by categories.
+
+# Presentation
+
+![Color share](viz/decks_colors.png)
+![Cards by set](viz/sets_count.png)
+![Cards by type](viz/types_count.png)
+![Prices by rarity](viz/avg_price_rarity.png)
+![Winner price](viz/avg_price_by_date.png)
+![Max price](viz/max_price_by_date.png)
