@@ -12,14 +12,14 @@ class Client:
     database, however, this could be easily enhanced to any
     database at all, including cloud.
     """
-    def insert_card(self, uuid, name, set_code, img, card_type, cost, cmc, price_paper, price_online):
+    def insert_card(self, uuid, name, set_code, img, card_type, cost, cmc, price_paper, price_online, rarity, color_identity):
         name = name.replace("'", "''")
         card_type = card_type.replace("'", "''")
         if price_online is None:
             price_online = 0
         if price_paper is None:
             price_paper = 0
-        return self.conn.execute(f"insert into card (uuid, name, set, img, type, cost, cmc, price_paper, price_online) values ('{uuid}','{name}','{set_code}','{img}','{card_type}','{cost}','{int(cmc)}','{price_paper}','{(price_online)}') on conflict do nothing;")
+        return self.conn.execute(f"insert into card (uuid, name, set, img, type, cost, cmc, price_paper, price_online, rarity, color_identity) values ('{uuid}','{name}','{set_code}','{img}','{card_type}','{cost}','{int(cmc)}','{price_paper}','{(price_online)}','{rarity}','{color_identity}') on conflict do nothing;")
 
     def insert_deck(self, site, date, tournament, pos):
         return self.conn.execute(f"insert into deck (id, date, site, tournament, position) values (DEFAULT,'{date}','{site}','{tournament}','{pos}') on conflict do nothing;")

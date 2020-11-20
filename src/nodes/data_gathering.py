@@ -47,7 +47,7 @@ def get_tournaments_url(url, driver, params):
     driver.get(url)
     logger.info('Started scraping tournaments at ' + url)
     time.sleep(5)
-    if site == 'magic':
+    if site == 'magic1':
         search_box = WebDriverWait(driver, timeout=20, poll_frequency=1).until(EC.presence_of_element_located((By.XPATH, '/html/body/div/div/div/div[1]/div/div/div[1]/div/div[2]/form/div/input')))
         search_box.send_keys('Standard')
         search_box.send_keys(Keys.ENTER)
@@ -58,12 +58,20 @@ def get_tournaments_url(url, driver, params):
             tournaments_list.append([date, tournament.get_attribute("href")])
     elif site == 'mtgmelee':
         time.sleep(8)
-        # size_selector = WebDriverWait(driver, timeout=20, poll_frequency=1).until(EC.presence_of_element_located((By.CLASS_NAME, 'select2-selection')))
-        # size_selector.click()
-        # time.sleep(1)
-        # per_page_500 = WebDriverWait(driver, timeout=20, poll_frequency=1).until(EC.presence_of_element_located((By.XPATH, '/html/body/span[2]/span/span[2]/ul/li[5]')))
-        # per_page_500.click()
-        # time.sleep(10)
+
+        date_selector = WebDriverWait(driver, timeout=20, poll_frequency=1).until(EC.presence_of_element_located((By.ID, 'search-dates')))
+        date_selector.click()
+        time.sleep(1)
+        selected_date = WebDriverWait(driver, timeout=20, poll_frequency=1).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[5]/div[1]/ul/li[4]')))
+        selected_date.click()
+        time.sleep(5)
+        size_selector = WebDriverWait(driver, timeout=20, poll_frequency=1).until(EC.presence_of_element_located((By.ID, 'tournaments-table_length')))
+        size_selector.click()
+        time.sleep(5)
+        per_page_500 = WebDriverWait(driver, timeout=20, poll_frequency=1).until(EC.presence_of_element_located((By.XPATH, '/html/body/span[2]/span/span[2]/ul/li[5]')))
+        per_page_500.click()
+        time.sleep(10)
+
         tournaments = WebDriverWait(driver, timeout=20, poll_frequency=1).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'tr[role="row"]')))
         tournaments = tournaments[1:]
         for tournament in tournaments:
@@ -83,7 +91,7 @@ def get_decklists(url, driver, params):
     driver.get(url=url)
     logger.info('Started scraping decklists from tournament ' + url)
     time.sleep(5)
-    if site == 'magic':
+    if site == 'magic1':
         decks = WebDriverWait(driver, timeout=20, poll_frequency=1).until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'css-163ya')))
         for index, deck in enumerate(decks, 1):
             decks_list.append(deck.text)

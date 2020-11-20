@@ -29,22 +29,26 @@ def update(client, params):
                 set_code = card['set']
                 img = card['image_uris']['png']
                 card_type = card['type_line']
+                rarity = card['rarity']
                 cost = card['mana_cost']
                 cmc = card['cmc']
                 price_paper = card['prices']['usd']
                 price_online = card['prices']['tix']
+                color_identity = ''.join(card['color_identity'])
             except KeyError:
                 uuid = card['id']
                 name = card['name']
                 set_code = card['set']
                 img = card['card_faces'][0]['image_uris']['png']
                 card_type = card['type_line']
+                rarity = card['rarity']
                 cost = card['card_faces'][0]['mana_cost']
                 cmc = card['cmc']
                 price_paper = card['prices']['usd']
                 price_online = card['prices']['tix']
+                color_identity = ''.join(card['color_identity'])
             finally:
-                client.insert_card(uuid, name, set_code, img, card_type, cost, cmc, price_paper, price_online)
+                client.insert_card(uuid, name, set_code, img, card_type, cost, cmc, price_paper, price_online, rarity, color_identity)
                 deck_id = client.select_max_deck_id()
                 client.insert_deck_card(deck_id, uuid, deck['section'][index], deck['amount'][index])
 
