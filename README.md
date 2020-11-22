@@ -14,11 +14,13 @@ Load each deck and card from the json files into the postgreSQL database.
 Expose statistics of the given decks and its card attributes
 
 # Analysis
+The goal of this project is to analyze the common factors among the top winner decks in different tournaments with more than 64 players registered. Card properties like type, set, colors, prices, mana cost and others are the ones provided by the Scryfall API.
+
+*:warning: Limitation note: currently the prices are obtained at the moment of the data extraction, not the date of the tournament.*
 
 ## Metagame
-The goal of this project is to analyze the common factors among the top 16 winner decks in different tournaments with more than 64 players registered. Card properties like type, set, colors, prices, mana cost and others are the ones provided by the Scryfall API.
+First, let's take a dive in the current metagame (october-november 2020)
 
-*Limitation note: currently the prices are obtained at the moment of the data extraction.*
 
 ### Color distribution
 
@@ -53,8 +55,43 @@ From 51552 cards registered in tournaments, 16229 were creatures, 9160 nonbasic 
 
 :bulb: *This gives a clear picture that agresive decks are abundant.*
 
+### Converted Mana Cost Distribution
+Most spells have a converted mana cost (an integer representing how much mana the spell costs), and in order for a player to interact in time in the game with 
+their opponent, they need to have a "mana curve" fitting the metagame, that is a proper distribution of the mana costs of their spells:
+| ![mana-curve-example](viz/mana_curve_example.png) | 
+|:--:|
+| *Magic mana curve example filtered by creatures only* |
+
+There is no use of building a deck with powerful cards if you cant play the before turn 5 while your opponent outraces you with cheap creatures.
+
 ### Set distribution
+| ![types-square](viz/sets_type_count.png) | 
+|:--:|
+| *Card types count for each set in all tournaments* |
 
+Aggregating by expansion set we can see how much each set apports to each card type in the current metagame. Throne of Eldraine (ELD) and Zendikar Rising (ZNR) contributed with the most number of creatures, favoring aggro decks. Also, the more type-focused sets Theros Beyond Death (THB) and again Zendikar Rising (ZNR) add Enchantments and Lands. On the other hand, the sets with less card count in the metagame like M21 and Ikoria (IKR) add instants with more frequency than the other sets.
 ### Rarity distribution
+As MTG cards have different chances of coming up in a booster pack - of the fifteen playing cards included, one is a basic land, ten are common, three are uncommon, and one is rare (76%) or mythic rare (24%) - mythic and rares tend to be more valuable because of their availability, specially if their mechanics are useful in-game.
 
+| ![count-prices-rarity](viz/amount_price_rarity.png) | 
+|:--:|
+| *Card rarity count and price in all tournaments* |
+
+:bulb: *The rare cards are the most played and the mythics are the most expensive in average.*
 ## Winner decks
+So, what of all the attributes of the cards showed before have relation with the finishing position of a deck in a tournament? Let's start by checking the correlation of the position of the deck with all the other variables. Because the lower position is better, the lower the value, the more they correlate.
+| ![correlations](viz/correlation.png) | 
+|:--:|
+| *Correlation between variables* |
+
+### Color
+### Type
+### CMC
+### Set
+### Rarity
+### Price
+| ![deck_prices_by_tournament](viz/avg_winner_price.png) | 
+|:--:|
+| *Average deck prices by tournament* |
+There is a very slight correlation between more expensive decks and better positions.
+
