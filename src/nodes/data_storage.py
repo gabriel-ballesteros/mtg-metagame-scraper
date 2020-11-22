@@ -37,7 +37,7 @@ def update(client, params):
                 color_identity = ''.join(card['color_identity'])
             except KeyError:
                 uuid = card['id']
-                name = card['name']
+                name = card['card_faces'][0]['name']
                 set_code = card['set']
                 img = card['card_faces'][0]['image_uris']['png']
                 card_type = card['type_line']
