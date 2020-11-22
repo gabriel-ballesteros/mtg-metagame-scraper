@@ -59,13 +59,11 @@ group by d.id;
     '''
     decks_colors = pd.read_sql_query(query, client.engine)
     df = decks_colors.groupby(by='uno').agg(white=('white', 'sum'),
-                          blue=('blue', 'sum'),
-                          black=('black', 'sum'),
-                          red=('red', 'sum'),
-                          green=('green', 'sum'))
-    fig = plt.figure(figsize=(6,6))
+                                            blue=('blue', 'sum'), black=('black', 'sum'),
+                                            red=('red', 'sum'), green=('green', 'sum'))
+    # fig = plt.figure(figsize=(6, 6))
     ax = plt.subplot(polar='True')
-    categories = ['White','Blue','Black','Red','Green']
+    categories = ['White', 'Blue', 'Black', 'Red', 'Green']
     N = len(categories)
     values = df.iloc[0].tolist()
     values += values[:1]
@@ -171,8 +169,8 @@ limit 20'''
     # plt.ylabel("Card count", size=15)
     plt.title("Nonland card name count", size=18)
     plt.tight_layout()
-    #ax.set_xticklabels(name)
-    #plt.subplots_adjust(bottom=0.2)
+    # ax.set_xticklabels(name)
+    # plt.subplots_adjust(bottom=0.2)
     plt.grid(axis='x')
     plt.savefig("../viz/nonland_name_count.png", dpi=100)
 
@@ -205,7 +203,7 @@ where c.type not like '%Basic Land%'
 and c.uuid = dc.card_id
 group by basic_type
 order by 2 desc;'''
-    df = pd.read_sql_query(query, client.engine)    
+    df = pd.read_sql_query(query, client.engine)
     types = df.iloc[:, 0].tolist()
     number = df.iloc[:, 1].tolist()
     plt.figure(figsize=(12, 8))
@@ -215,8 +213,8 @@ order by 2 desc;'''
     # plt.ylabel("Card count", size=15)
     plt.title("Card type count", size=18)
     plt.tight_layout()
-    #ax.set_xticklabels(name)
-    #plt.subplots_adjust(bottom=0.2)
+    # ax.set_xticklabels(name)
+    # plt.subplots_adjust(bottom=0.2)
     plt.grid(axis='x')
     plt.savefig("../viz/types_count.png", dpi=100)
 
@@ -237,7 +235,7 @@ order by 1,2;
     types = df.iloc[:, 1].tolist()
     number = df.iloc[:, 2].tolist()
     plt.figure(figsize=(12, 8))
-
+    sets = [a.upper() for a in sets]
     # make barplot
     sns.barplot(x=sets, y=number, hue=types, palette='tab10')
     # set labels
@@ -247,29 +245,6 @@ order by 1,2;
     plt.grid(axis='y')
     plt.tight_layout()
     plt.savefig("../viz/sets_type_count.png", dpi=100)
-
-
-def plot_rarity_count(client):
-    query = '''select c.rarity
-,sum(dc.amount) as cards
-from card as c, deck_card as dc
-where c.uuid = dc.card_id
-and c.type not like '%Basic Land%'
-group by c.rarity
-order by 2 desc;
-    '''
-    df = pd.read_sql_query(query, client.engine)
-    rarity = df.iloc[:, 0].tolist()
-    number = df.iloc[:, 1].tolist()
-    plt.figure(figsize=(12, 8))
-    sns.plo(x=rarity, y=number, palette='muted')
-    # set labels
-    # plt.ylabel("Sets", size=15)
-    # plt.ylabel("Card count", size=15)
-    plt.title("Card rarity count", size=18)
-    plt.grid(axis='y')
-    plt.tight_layout()
-    plt.savefig("../viz/rarity_count.png", dpi=100)
 
 
 def plot_amount_price_by_rarity(client):
@@ -294,41 +269,137 @@ order by 2 desc;
     plt.savefig("../viz/amount_price_rarity.png", dpi=100)
 
 
-def plot_winner_price_in_time(client):
-    query = '''select d.date, sum(c.price_paper)
-from card as c, deck as d, deck_card as dc
-where c.uuid = dc.card_id and d.id = dc.deck_id
-and d.position = 1
-group by d.date
-order by 1 desc'''
+def plot_cmc_count(client):
+    query = '''select
+c.cmc as cmc,sum(dc.amount) as number
+from card as c, deck_card as dc
+where c.uuid = dc.card_id
+and case when c.type like '%//%' then SPLIT_PART(SPLIT_PART(c.type,' // ',1),' — ',1 ) else
+SPLIT_PART(c.type,' — ',1) end not like '%Land%'
+group by c.cmc
+order by 1'''
     df = pd.read_sql_query(query, client.engine)
-    #df = df.sort_values(df.columns[1],ascending=False)
-    date = df.iloc[:, 0].tolist()
-    prices = df.iloc[:, 1].tolist()
-    plt.figure(figsize=(16,8))
-
-    # make barplot
-    sns.lineplot(x=date, y=prices)
+    cmcs = df['cmc'].tolist()
+    number = df['number'].tolist()
+    plt.figure(figsize=(12, 8))
+    sns.barplot(x=cmcs, y=number, palette='flare')
     # set labels
     # plt.ylabel("Sets", size=15)
     # plt.ylabel("Card count", size=15)
-    plt.title("Prices of winner decks by date", size=18)
+    plt.title("Card CMC distribution", size=18)
+    plt.grid(axis='y')
     plt.tight_layout()
-    plt.savefig("../viz/avg_price_by_date.png", dpi=100)
+    plt.savefig("../viz/cmc_count.png", dpi=100)
+
+
+def plot_cmc_type_count(client):
+    query = '''select
+c.cmc as cmc
+,case when c.type like '%//%' then SPLIT_PART(SPLIT_PART(c.type,' // ',1),' — ',1 ) else SPLIT_PART(c.type,' — ',1) end as basic_type
+,sum(dc.amount) as number
+from card as c, deck_card as dc
+where c.uuid = dc.card_id
+and case when c.type like '%//%' then SPLIT_PART(SPLIT_PART(c.type,' // ',1),' — ',1 ) else SPLIT_PART(c.type,' — ',1) end not like '%Land%'
+group by c.cmc, basic_type
+order by 1'''
+    df = pd.read_sql_query(query, client.engine)
+    cmcs = df['cmc'].tolist()
+    types = df['basic_type']
+    number = df['number'].tolist()
+    plt.figure(figsize=(12, 8))
+    sns.barplot(x=cmcs, y=number, hue=types, palette='muted')
+    # set labels
+    # plt.ylabel("Sets", size=15)
+    # plt.ylabel("Card count", size=15)
+    plt.title("Card type distribution by CMC", size=18)
+    plt.grid(axis='y')
+    plt.tight_layout()
+    plt.savefig("../viz/cmc_type_count.png", dpi=100)
+
+
+def plot_winner_price_in_tournament(client):
+    query_winners = '''select SPLIT_PART(d.tournament,'-',3) as tournament, sum(c.price_paper) as winner_price
+from card as c, deck as d, deck_card as dc
+where c.uuid = dc.card_id and d.id = dc.deck_id
+and d.position = 1
+and d.site != 'magic'
+group by d.tournament
+order by 1 desc;'''
+    query_avg = '''with tournaments_decks as (select SPLIT_PART(d.tournament,'-',3) as tournament, d.id as deck_id, sum(c.price_paper) as price
+from card as c, deck as d, deck_card as dc
+where c.uuid = dc.card_id and d.id = dc.deck_id
+and d.site != 'magic'
+group by d.tournament, d.id)
+select tournament, round(avg(price),2) as avg_price
+from tournaments_decks
+group by tournament
+order by 1 desc;'''
+    df_w = pd.read_sql_query(query_winners, client.engine)
+
+    df = pd.read_sql_query(query_avg, client.engine)
+
+    df = df.merge(right=df_w, how='inner', on='tournament')
+    df.columns = ['tournament', 'Average deck price', 'Winner deck price']
+
+    plt.figure(figsize=(16, 8))
+
+    # make barplot
+    sns.lineplot(data=df, markers=True)
+    # set labels
+    plt.ylabel("Price in USD", size=15)
+    plt.xlabel("Tournament ID", size=15)
+    plt.grid()
+    plt.title("Prices of decks by tournament", size=18)
+    plt.tight_layout()
+    plt.savefig("../viz/avg_winner_price.png", dpi=100)
+
+
+def plot_position_correlation(client):
+    query = '''select CAST(SPLIT_PART(d.tournament,'-',3) as INTEGER) as tou, CAST(d.position as INTEGER) as pos, sum(c.price_paper * dc.amount) as price,
+
+sum(case when (c.color_identity) like '%W%' then 1 else 0 end) as white,
+sum(case when (c.color_identity) like '%U%' then 1 else 0 end) as blue,
+sum(case when (c.color_identity) like '%B%' then 1 else 0 end) as black,
+sum(case when (c.color_identity) like '%R%' then 1 else 0 end) as red,
+sum(case when (c.color_identity) like '%G%' then 1 else 0 end) as green,
+
+ROUND((CAST (SUM(c.cmc) as NUMERIC) / CAST (SUM(dc.amount) as NUMERIC)),2) as cmc_ratio,
+
+sum(case when (case when c.type like '%//%' then SPLIT_PART(SPLIT_PART(c.type,' // ',1),' — ',1 ) else SPLIT_PART(c.type,' — ',1) end) like '%Creature%' then dc.amount else 0 end) as creatures,
+sum(case when (case when c.type like '%//%' then SPLIT_PART(SPLIT_PART(c.type,' // ',1),' — ',1 ) else SPLIT_PART(c.type,' — ',1) end) = 'Instant' then dc.amount else 0 end) as instants,
+sum(case when (case when c.type like '%//%' then SPLIT_PART(SPLIT_PART(c.type,' // ',1),' — ',1 ) else SPLIT_PART(c.type,' — ',1) end) = 'Sorcery' then dc.amount else 0 end) as sorceries,
+sum(case when (case when c.type like '%//%' then SPLIT_PART(SPLIT_PART(c.type,' // ',1),' — ',1 ) else SPLIT_PART(c.type,' — ',1) end) in ('Enchantment','Legendary Enchantment') then dc.amount else 0 end) as enchantments,
+sum(case when (case when c.type like '%//%' then SPLIT_PART(SPLIT_PART(c.type,' // ',1),' — ',1 ) else SPLIT_PART(c.type,' — ',1) end) in ('Artifact','Legendary Artifact') then dc.amount else 0 end) as artifacts,
+sum(case when (case when c.type like '%//%' then SPLIT_PART(SPLIT_PART(c.type,' // ',1),' — ',1 ) else SPLIT_PART(c.type,' — ',1) end) = 'Legendary Planeswalker' then dc.amount else 0 end) as planeswalkers,
+sum(case when (case when c.type like '%//%' then SPLIT_PART(SPLIT_PART(c.type,' // ',1),' — ',1 ) else SPLIT_PART(c.type,' — ',1) end) in ('Land','Basic Land') then dc.amount else 0 end) as lands,
+
+sum(dc.amount) as total_cards
+from card as c, deck as d, deck_card as dc
+where c.uuid = dc.card_id and d.id = dc.deck_id
+and d.site != 'magic'
+group by d.tournament, d.id, d.position;
+    '''
+    df = pd.read_sql_query(query, client.engine)
+    correlation = df.corr()
+    
+    plt.figure(figsize=(16, 8))
+    sns.heatmap(data=correlation, annot=True)
+    plt.title("Correlation between variables", size=18)
+    plt.savefig("../viz/correlation.png", dpi=100)
 
 
 def update(client, params):
-    #plot_decks_colors(client)
-    #plot_nonland_name_cloud(client)
-    #plot_nonland_name_bar(client)
-    #plot_types_square(client)
-    #plot_types_bar(client)
-    #plot_set_type_count(client)
+    plot_decks_colors(client)
+    plot_nonland_name_cloud(client)
+    plot_nonland_name_bar(client)
+    plot_types_square(client)
+    plot_types_bar(client)
+    plot_set_type_count(client)
+    plot_cmc_count(client)
+    plot_cmc_type_count(client)
     plot_amount_price_by_rarity(client)
-    #plot_price_by_rarity(client)
-    #plot_winner_price_in_time(client)
-    #plot_max_price_in_time(client)
-
+    plot_winner_price_in_tournament(client)
+    plot_position_correlation(client)
 
 
 def done(client, params):
