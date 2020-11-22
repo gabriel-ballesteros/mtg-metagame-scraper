@@ -59,7 +59,7 @@ group by d.id;
     decks_colors = pd.read_sql_query(query, client.engine)
     df = decks_colors.groupby(by='uno').agg(white=('white', 'sum'),
                           blue=('blue', 'sum'),
-                        black=('black', 'sum'),
+                          black=('black', 'sum'),
                           red=('red', 'sum'),
                           green=('green', 'sum'))
     fig = plt.figure(figsize=(6,6))
@@ -74,7 +74,6 @@ group by d.id;
 
     plt.polar(angles, values, marker='.')
     plt.fill(angles, values, alpha=0.3)
-
     plt.xticks(angles[:-1], categories)
 
     ax.set_rlabel_position(0)
@@ -105,6 +104,7 @@ order by 3 desc'''
     black = []
     red = []
     green = []
+    multi = []
     for index, row in df.iterrows():
         if row['color'] == 'W':
             white.append(row['name'])
@@ -116,29 +116,64 @@ order by 3 desc'''
             red.append(row['name'])
         elif row['color'] == 'G':
             green.append(row['name'])
+        elif len(row['color']) > 1:
+            multi.append(row['name'])
     color_to_words = {}
-    color_to_words['yellow'] = white
-    color_to_words['blue'] = blue
-    color_to_words['violet'] = black
-    color_to_words['red'] = red
-    color_to_words['green'] = green
-
-    wc = WordCloud(collocations=False, background_color='white', width=1000, height=800).generate_from_frequencies(d)
-
-    #plt.figure(figsize=(20, 15))
-    default_color = 'black'
-
-    grouped_color_func = GroupedColorFunc(color_to_words, default_color)
-
+    color_to_words['#bdaa00'] = white
+    color_to_words['#0099d1'] = blue
+    color_to_words['#9a00bd'] = black
+    color_to_words['#ff0000'] = red
+    color_to_words['#119100'] = green
+    color_to_words['#ff69f5'] = multi
+    mask = np.array(Image.open('../viz/cards-fan.jpg'))
+    wc = WordCloud(collocations=False, background_color='white', width=1000, height=800, mask=mask).generate_from_frequencies(d)
+    default_color = '#424142'
+    grouped_color_func = SimpleGroupedColorFunc(color_to_words, default_color)
     wc.recolor(color_func=grouped_color_func)
-
-    plt.figure(figsize=(20, 10), facecolor='k')
+    plt.figure(figsize=(20, 10))
+    plt.imshow(wc, interpolation="bilinear")
     plt.axis("off")
     plt.tight_layout(pad=0)
-    plt.imshow(wc, interpolation="bilinear")
-    
-    plt.savefig('../viz/nonland_name_cloud.png')
+    plt.savefig('../viz/nonland_name_cloud.png', bbox_inches='tight')
 
+
+def plot_nonland_name_bar(client):
+    query = '''select case when c.name like '%//%' then split_part(c.name, '//', 1) else c.name end as name
+,case when length(c.color_identity) > 1 then '#ff69f5' else
+	case when c.color_identity = 'W' then '#bdaa00' else
+		case when c.color_identity = 'U' then '#0099d1' else
+			case when c.color_identity = 'B' then '#9a00bd' else
+				case when c.color_identity = 'R' then '#ff0000' else
+				 case when c.color_identity = 'G' then '#119100' else
+				 	'grey'
+				 end
+				end
+			end
+		end
+	end
+end as color
+,sum(dc.amount) as amount
+from card as c, deck_card as dc
+where c.uuid = dc.card_id
+and c.type not like '%Land%'
+group by c.name, c.color_identity
+order by 3 desc
+limit 20'''
+    df = pd.read_sql_query(query, client.engine)
+    name = df.iloc[:, 0].tolist()
+    colors = df.iloc[:, 1].tolist()
+    number = df.iloc[:, 2].tolist()
+    plt.figure(figsize=(12, 8))
+    ax = sns.barplot(y=name, x=number, palette=colors)
+    # set labels
+    # plt.ylabel("Sets", size=15)
+    # plt.ylabel("Card count", size=15)
+    plt.title("Nonland card name count", size=18)
+    plt.tight_layout()
+    #ax.set_xticklabels(name)
+    #plt.subplots_adjust(bottom=0.2)
+    plt.grid(axis='x')
+    plt.savefig("../viz/nonland_name_count.png", dpi=100)
 
 def plot_types_count(client):
     query = '''select SPLIT_PART(c.type, ' — ', 1), count(1)
@@ -191,18 +226,19 @@ where c.type not like '%Basic Land%'
 group by c.rarity
     '''
     df = pd.read_sql_query(query, client.engine)
-    df = df.sort_values(df.columns[1],ascending=False)
+    df = df.sort_values(df.columns[1], ascending=False)
     rarity = df.iloc[:, 0].tolist()
     values = df.iloc[:, 1].tolist()
-    plt.figure(figsize=(8,10))
+    plt.figure(figsize=(8, 10))
 
     # make barplot
-    sns.barplot(x=rarity, y=values)
+    sns.barplot(x=rarity, y=values, palette='flare')
     # set labels
     # plt.ylabel("Sets", size=15)
     # plt.ylabel("Card count", size=15)
     plt.title("Avg prices by rarity in USD", size=18)
     plt.tight_layout()
+    plt.grid(axis='y')
     plt.savefig("../viz/avg_price_rarity.png", dpi=100)
 
 
@@ -278,10 +314,11 @@ def update(client, params):
     #plot_decks_colors(client)
     #plot_types_count(client)
     #plot_set_count(client)
-    #plot_price_by_rarity(client)
+    plot_price_by_rarity(client)
     #plot_winner_price_in_time(client)
     #plot_max_price_in_time(client)
-    plot_nonland_name_cloud(client)
+    #plot_nonland_name_cloud(client)
+    plot_nonland_name_bar(client)
 
 
 def done(client, params):
