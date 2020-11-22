@@ -141,17 +141,17 @@ order by 3 desc'''
 def plot_nonland_name_bar(client):
     query = '''select case when c.name like '%//%' then split_part(c.name, '//', 1) else c.name end as name
 ,case when length(c.color_identity) > 1 then '#ff69f5' else
-	case when c.color_identity = 'W' then '#bdaa00' else
-		case when c.color_identity = 'U' then '#0099d1' else
-			case when c.color_identity = 'B' then '#9a00bd' else
-				case when c.color_identity = 'R' then '#ff0000' else
-				 case when c.color_identity = 'G' then '#119100' else
-				 	'grey'
-				 end
-				end
-			end
-		end
-	end
+case when c.color_identity = 'W' then '#bdaa00' else
+case when c.color_identity = 'U' then '#0099d1' else
+case when c.color_identity = 'B' then '#9a00bd' else
+case when c.color_identity = 'R' then '#ff0000' else
+case when c.color_identity = 'G' then '#119100' else
+'grey'
+end
+end
+end
+end
+end
 end as color
 ,sum(dc.amount) as amount
 from card as c, deck_card as dc
@@ -165,7 +165,7 @@ limit 20'''
     colors = df.iloc[:, 1].tolist()
     number = df.iloc[:, 2].tolist()
     plt.figure(figsize=(12, 8))
-    ax = sns.barplot(y=name, x=number, palette=colors)
+    sns.barplot(y=name, x=number, palette=colors)
     # set labels
     # plt.ylabel("Sets", size=15)
     # plt.ylabel("Card count", size=15)
@@ -176,7 +176,8 @@ limit 20'''
     plt.grid(axis='x')
     plt.savefig("../viz/nonland_name_count.png", dpi=100)
 
-def plot_types_count(client):
+
+def plot_types_square(client):
     query = '''select case when c.type like '%//%' then SPLIT_PART(SPLIT_PART(c.type,' // ',1),' — ',1 ) else
 SPLIT_PART(c.type,' — ',1) end as basic_type, sum(dc.amount) as amount
 from card as c, deck_card as dc
@@ -194,6 +195,30 @@ order by 2 desc;
     plt.axis('off')
     plt.tight_layout()
     plt.savefig("../viz/types_square.png", dpi=100)
+
+
+def plot_types_bar(client):
+    query = '''select case when c.type like '%//%' then SPLIT_PART(SPLIT_PART(c.type,' // ',1),' — ',1 ) else
+SPLIT_PART(c.type,' — ',1) end as basic_type, sum(dc.amount) as amount
+from card as c, deck_card as dc
+where c.type not like '%Basic Land%'
+and c.uuid = dc.card_id
+group by basic_type
+order by 2 desc;'''
+    df = pd.read_sql_query(query, client.engine)    
+    types = df.iloc[:, 0].tolist()
+    number = df.iloc[:, 1].tolist()
+    plt.figure(figsize=(12, 8))
+    sns.barplot(y=types, x=number, palette='muted')
+    # set labels
+    # plt.ylabel("Sets", size=15)
+    # plt.ylabel("Card count", size=15)
+    plt.title("Card type count", size=18)
+    plt.tight_layout()
+    #ax.set_xticklabels(name)
+    #plt.subplots_adjust(bottom=0.2)
+    plt.grid(axis='x')
+    plt.savefig("../viz/types_count.png", dpi=100)
 
 
 def plot_set_count(client):
@@ -311,13 +336,15 @@ select date, max(price) as price from decks group by date order by 1 desc;'''
 
 def update(client, params):
     plot_decks_colors(client)
-    plot_types_count(client)
+    plot_nonland_name_cloud(client)
+    plot_nonland_name_bar(client)
+    plot_types_square(client)
+    plot_types_bar(client)
     #plot_set_count(client)
     #plot_price_by_rarity(client)
     #plot_winner_price_in_time(client)
     #plot_max_price_in_time(client)
-    plot_nonland_name_cloud(client)
-    plot_nonland_name_bar(client)
+
 
 
 def done(client, params):
