@@ -221,49 +221,77 @@ order by 2 desc;'''
     plt.savefig("../viz/types_count.png", dpi=100)
 
 
-def plot_set_count(client):
-    query = '''select c.set, count(1)
-from card as c
-where c.type not like '%Basic Land%'
-group by c.set;
+def plot_set_type_count(client):
+    query = '''select c.set
+,case when c.type like '%//%' then SPLIT_PART(SPLIT_PART(c.type,' // ',1),' — ',1 ) else
+SPLIT_PART(c.type,' — ',1) end as basic_type
+,sum(dc.amount) as cards
+from card as c, deck_card as dc
+where c.uuid = dc.card_id
+and c.type not like '%Basic Land%' and set in ('znr','iko','m21','thb','eld')
+group by c.set, basic_type
+order by 1,2;
 '''
     df = pd.read_sql_query(query, client.engine)
-    df = df.sort_values(df.columns[1],ascending=False)
     sets = df.iloc[:, 0].tolist()
-    values = df.iloc[:, 1].tolist()
-    plt.figure(figsize=(8,10))
+    types = df.iloc[:, 1].tolist()
+    number = df.iloc[:, 2].tolist()
+    plt.figure(figsize=(12, 8))
 
     # make barplot
-    sns.barplot(y=sets, x=values)
+    sns.barplot(x=sets, y=number, hue=types, palette='tab10')
     # set labels
     # plt.ylabel("Sets", size=15)
     # plt.ylabel("Card count", size=15)
     plt.title("Card set count", size=18)
+    plt.grid(axis='y')
     plt.tight_layout()
-    plt.savefig("../viz/sets_count.png", dpi=100)
+    plt.savefig("../viz/sets_type_count.png", dpi=100)
 
 
-def plot_price_by_rarity(client):
-    query = '''select c.rarity, avg(c.price_paper)
-from card as c
-where c.type not like '%Basic Land%'
+def plot_rarity_count(client):
+    query = '''select c.rarity
+,sum(dc.amount) as cards
+from card as c, deck_card as dc
+where c.uuid = dc.card_id
+and c.type not like '%Basic Land%'
 group by c.rarity
+order by 2 desc;
     '''
     df = pd.read_sql_query(query, client.engine)
-    df = df.sort_values(df.columns[1], ascending=False)
     rarity = df.iloc[:, 0].tolist()
-    values = df.iloc[:, 1].tolist()
-    plt.figure(figsize=(8, 10))
-
-    # make barplot
-    sns.barplot(x=rarity, y=values, palette='flare')
+    number = df.iloc[:, 1].tolist()
+    plt.figure(figsize=(12, 8))
+    sns.plo(x=rarity, y=number, palette='muted')
     # set labels
     # plt.ylabel("Sets", size=15)
     # plt.ylabel("Card count", size=15)
-    plt.title("Avg prices by rarity in USD", size=18)
-    plt.tight_layout()
+    plt.title("Card rarity count", size=18)
     plt.grid(axis='y')
-    plt.savefig("../viz/avg_price_rarity.png", dpi=100)
+    plt.tight_layout()
+    plt.savefig("../viz/rarity_count.png", dpi=100)
+
+
+def plot_amount_price_by_rarity(client):
+    query = '''select c.rarity as rarity
+, sum(dc.amount) as amount
+,round(avg(dc.amount * c.price_paper),2) as avg_price
+from card as c, deck_card as dc
+where c.uuid = dc.card_id
+and c.type not like '%Basic Land%'
+group by 1
+order by 2 desc;
+    '''
+    df = pd.read_sql_query(query, client.engine)
+
+    df[['amount']].plot(kind='bar')
+    df['avg_price'].plot(secondary_y=True, color='r')
+
+    ax = plt.gca()
+    # plt.xlim([-width, len(m1_t['normal'])-width])
+    ax.set_xticklabels((df['rarity']))
+
+    plt.savefig("../viz/amount_price_rarity.png", dpi=100)
 
 
 def plot_winner_price_in_time(client):
@@ -289,58 +317,14 @@ order by 1 desc'''
     plt.savefig("../viz/avg_price_by_date.png", dpi=100)
 
 
-def plot_max_price_in_time(client):
-    query = '''select d.date, sum(c.price_paper)
-from card as c, deck as d, deck_card as dc
-where c.uuid = dc.card_id and d.id = dc.deck_id
-and d.position = 1
-group by d.date
-order by 1 desc'''
-    df = pd.read_sql_query(query, client.engine)
-    #df = df.sort_values(df.columns[1],ascending=False)
-    date = df.iloc[:, 0].tolist()
-    prices = df.iloc[:, 1].tolist()
-    plt.figure(figsize=(16,8))
-
-    # make barplot
-    sns.lineplot(x=date, y=prices)
-    # set labels
-    # plt.ylabel("Sets", size=15)
-    # plt.ylabel("Card count", size=15)
-    plt.title("Prices of winner decks by date in USD", size=18)
-    plt.tight_layout()
-    plt.savefig("../viz/avg_price_by_date.png", dpi=100)
-    query = '''with decks as (
-select d.date as date, d.id as id,sum(c.price_paper) as price
-from card as c, deck as d, deck_card as dc
-where c.uuid = dc.card_id and d.id = dc.deck_id
-group by d.date, d.id
-order by 1 desc
-)
-select date, max(price) as price from decks group by date order by 1 desc;'''
-    df = pd.read_sql_query(query, client.engine)
-    #df = df.sort_values(df.columns[1],ascending=False)
-    date = df.iloc[:, 0].tolist()
-    prices = df.iloc[:, 1].tolist()
-    plt.figure(figsize=(16,8))
-
-    # make barplot
-    sns.lineplot(x=date, y=prices)
-    # set labels
-    # plt.ylabel("Sets", size=15)
-    # plt.ylabel("Card count", size=15)
-    plt.title("Most expensive decks by date in USD", size=18)
-    plt.tight_layout()
-    plt.savefig("../viz/max_price_by_date.png", dpi=100)
-
-
 def update(client, params):
-    plot_decks_colors(client)
-    plot_nonland_name_cloud(client)
-    plot_nonland_name_bar(client)
-    plot_types_square(client)
-    plot_types_bar(client)
-    #plot_set_count(client)
+    #plot_decks_colors(client)
+    #plot_nonland_name_cloud(client)
+    #plot_nonland_name_bar(client)
+    #plot_types_square(client)
+    #plot_types_bar(client)
+    #plot_set_type_count(client)
+    plot_amount_price_by_rarity(client)
     #plot_price_by_rarity(client)
     #plot_winner_price_in_time(client)
     #plot_max_price_in_time(client)
