@@ -6,6 +6,7 @@ from math import pi
 from wordcloud import (WordCloud, get_single_color_func)
 import numpy as np
 from PIL import Image
+import squarify
 
 logger = logging.getLogger('nodes.data_viz')
 
@@ -176,25 +177,23 @@ limit 20'''
     plt.savefig("../viz/nonland_name_count.png", dpi=100)
 
 def plot_types_count(client):
-    query = '''select SPLIT_PART(c.type, ' — ', 1), count(1)
-from card as c
+    query = '''select case when c.type like '%//%' then SPLIT_PART(SPLIT_PART(c.type,' // ',1),' — ',1 ) else
+SPLIT_PART(c.type,' — ',1) end as basic_type, sum(dc.amount) as amount
+from card as c, deck_card as dc
 where c.type not like '%Basic Land%'
-group by SPLIT_PART(c.type, ' — ', 1);
+and c.uuid = dc.card_id
+group by basic_type
+order by 2 desc;
     '''
     df = pd.read_sql_query(query, client.engine)
-    df = df.sort_values(df.columns[1],ascending=False)
     types = df.iloc[:, 0].tolist()
-    values = df.iloc[:, 1].tolist()
-    plt.figure(figsize=(12,10))
-
-    # make barplot
-    sns.barplot(y=types, x=values)
-    # set labels
-    # plt.ylabel("Sets", size=15)
-    # plt.ylabel("Card count", size=15)
-    plt.title("Card type count", size=18)
+    number = df.iloc[:, 1].tolist()
+    plt.figure(figsize=(17, 8))
+    types = [x.replace(' ', '\n') for x in types]
+    squarify.plot(sizes=number, label=types[:9], alpha=0.8, text_kwargs={'fontsize': 16})
+    plt.axis('off')
     plt.tight_layout()
-    plt.savefig("../viz/types_count.png", dpi=100)
+    plt.savefig("../viz/types_square.png", dpi=100)
 
 
 def plot_set_count(client):
@@ -311,13 +310,13 @@ select date, max(price) as price from decks group by date order by 1 desc;'''
 
 
 def update(client, params):
-    #plot_decks_colors(client)
-    #plot_types_count(client)
+    plot_decks_colors(client)
+    plot_types_count(client)
     #plot_set_count(client)
-    plot_price_by_rarity(client)
+    #plot_price_by_rarity(client)
     #plot_winner_price_in_time(client)
     #plot_max_price_in_time(client)
-    #plot_nonland_name_cloud(client)
+    plot_nonland_name_cloud(client)
     plot_nonland_name_bar(client)
 
 
