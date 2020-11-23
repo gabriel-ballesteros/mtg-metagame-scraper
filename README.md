@@ -116,5 +116,5 @@ The colors that tend to appear more among first place decks are blue and black, 
 | ![deck_prices_by_tournament](viz/avg_winner_price.png) | 
 |:--:|
 | *Average deck prices by tournament* |
-There is a very slight inclination for the winning decks to be more expensive.
+There is a very slight inclination for the winning decks to be more cheap.
 
