@@ -60,7 +60,7 @@ def update(client, params):
         response['amount'] = [x[2] for x in decklist[2]]
         f.write(json.dumps(response))
         f.close()
-        time.sleep(0.1)
+        time.sleep(0.2)
     logger.info('Normalized and saved ' + str(len(file_list)) + ' decklists in json files at ' + params.processed_data)
 
 

@@ -37,10 +37,10 @@ class Params:
     load_dotenv(dotenv_path=env_path)
 
     # parameters
-    sites_to_scrape = ['https://magic.gg/decklists', 'https://mtgmelee.com/Decklists/Standard']
+    sites_to_scrape = ['https://mtgmelee.com/Decklists/Standard']
     mtgmelee_orgs = ['star city games', 'channelfireball']
 
-    top_d_cut = 16
+    top_d_cut = 32
     min_t_players = 32
 
     chrome_options = Options()

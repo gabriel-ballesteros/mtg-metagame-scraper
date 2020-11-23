@@ -7,6 +7,7 @@ from wordcloud import (WordCloud, get_single_color_func)
 import numpy as np
 from PIL import Image
 import squarify
+import os
 
 logger = logging.getLogger('nodes.data_viz')
 
@@ -61,7 +62,7 @@ group by d.id;
     df = decks_colors.groupby(by='uno').agg(white=('white', 'sum'),
                                             blue=('blue', 'sum'), black=('black', 'sum'),
                                             red=('red', 'sum'), green=('green', 'sum'))
-    # fig = plt.figure(figsize=(6, 6))
+    fig = plt.figure(figsize=(6, 6))
     ax = plt.subplot(polar='True')
     categories = ['White', 'Blue', 'Black', 'Red', 'Green']
     N = len(categories)
@@ -77,7 +78,7 @@ group by d.id;
 
     ax.set_rlabel_position(0)
     top = max(df.iloc[0].tolist())
-    plt.yticks([100, 200, 300, 400], color='grey', size=10)
+    plt.yticks([top / 5, top / 5 * 2, top / 5 * 3, top / 5 * 4, top], color='grey', size=10, labels=[])
     plt.ylim(0, top)
     plt.savefig('../viz/decks_colors.png')
 
@@ -318,7 +319,7 @@ order by 1'''
 
 
 def plot_winner_price_in_tournament(client):
-    query_winners = '''select SPLIT_PART(d.tournament,'-',3) as tournament, sum(c.price_paper) as winner_price
+    query_winners = '''select SPLIT_PART(d.tournament,'-',3) as tournament, sum(c.price_paper) as price
 from card as c, deck as d, deck_card as dc
 where c.uuid = dc.card_id and d.id = dc.deck_id
 and d.position = 1
@@ -330,31 +331,26 @@ from card as c, deck as d, deck_card as dc
 where c.uuid = dc.card_id and d.id = dc.deck_id
 and d.site != 'magic'
 group by d.tournament, d.id)
-select tournament, round(avg(price),2) as avg_price
+select tournament, round(avg(price),2) as price
 from tournaments_decks
 group by tournament
 order by 1 desc;'''
     df_w = pd.read_sql_query(query_winners, client.engine)
-
+    df_w['deck'] = 'winner'
     df = pd.read_sql_query(query_avg, client.engine)
+    df['deck'] = 'average'
+    result = pd.concat([df_w, df])
 
-    df = df.merge(right=df_w, how='inner', on='tournament')
-    df.columns = ['tournament', 'Average deck price', 'Winner deck price']
-
-    plt.figure(figsize=(16, 8))
-
-    # make barplot
-    sns.lineplot(data=df, markers=True)
-    # set labels
-    plt.ylabel("Price in USD", size=15)
-    plt.xlabel("Tournament ID", size=15)
-    plt.grid()
-    plt.title("Prices of decks by tournament", size=18)
+    plt.figure(figsize=(14, 10))
+    s = sns.barplot(data=result, x='tournament', y='price', hue='deck')
+    s.set_xlabel('')
+    plt.ylabel('Deck price in USD', size=14)
+    plt.grid(axis='y')
     plt.tight_layout()
-    plt.savefig("../viz/avg_winner_price.png", dpi=100)
+    plt.savefig("../viz/avg_winner_price.png")
 
 
-def plot_position_correlation(client):
+def plot_correlation(client):
     query = '''select CAST(SPLIT_PART(d.tournament,'-',3) as INTEGER) as tou, CAST(d.position as INTEGER) as pos, sum(c.price_paper * dc.amount) as price,
 
 sum(case when (c.color_identity) like '%W%' then 1 else 0 end) as white,
@@ -381,14 +377,53 @@ group by d.tournament, d.id, d.position;
     '''
     df = pd.read_sql_query(query, client.engine)
     correlation = df.corr()
-    
+
     plt.figure(figsize=(16, 8))
     sns.heatmap(data=correlation, annot=True)
     plt.title("Correlation between variables", size=18)
     plt.savefig("../viz/correlation.png", dpi=100)
 
 
+def plot_winner_colors(client):
+    query = '''select 1 as uno, d.id as id,
+case when string_agg(c.color_identity, '') like '%W%' then 1 else 0 end as white,
+case when string_agg(c.color_identity, '') like '%U%' then 1 else 0 end as blue,
+case when string_agg(c.color_identity, '') like '%B%' then 1 else 0 end as black,
+case when string_agg(c.color_identity, '') like '%R%' then 1 else 0 end as red,
+case when string_agg(c.color_identity, '') like '%G%' then 1 else 0 end as green
+from deck as d,card as c, deck_card as dc
+where d.position = 1
+and dc.deck_id = d.id
+and dc.card_id = c.uuid
+group by d.id;
+    '''
+    decks_colors = pd.read_sql_query(query, client.engine)
+    df = decks_colors.groupby(by='uno').agg(white=('white', 'sum'),
+                                            blue=('blue', 'sum'), black=('black', 'sum'),
+                                            red=('red', 'sum'), green=('green', 'sum'))
+    fig = plt.figure(figsize=(6, 6))
+    ax = plt.subplot(polar='True')
+    categories = ['White', 'Blue', 'Black', 'Red', 'Green']
+    N = len(categories)
+    values = df.iloc[0].tolist()
+    values += values[:1]
+
+    angles = [n / float(N) * 2 * pi for n in range(N)]
+    angles += angles[:1]
+
+    plt.polar(angles, values, marker='.')
+    plt.fill(angles, values, alpha=0.3)
+    plt.xticks(angles[:-1], categories)
+
+    ax.set_rlabel_position(0)
+    top = max(df.iloc[0].tolist())
+    plt.yticks([top / 5, top / 5 * 2, top / 5 * 3, top / 5 * 4, top], color='grey', size=10, labels=[])
+    plt.ylim(0, top)
+    plt.savefig('../viz/winner_colors.png')
+
+
 def update(client, params):
+    logger.info('CREATING VISUALIZATIONS')
     plot_decks_colors(client)
     plot_nonland_name_cloud(client)
     plot_nonland_name_bar(client)
@@ -397,9 +432,12 @@ def update(client, params):
     plot_set_type_count(client)
     plot_cmc_count(client)
     plot_cmc_type_count(client)
-    plot_amount_price_by_rarity(client)
+    plot_winner_colors(client)
     plot_winner_price_in_tournament(client)
-    plot_position_correlation(client)
+    plot_correlation(client)
+    plot_amount_price_by_rarity(client)
+
+    logger.info('Created ' + str(len(os.listdir('../viz/')) - 2) + ' visualization figures at ../viz/')
 
 
 def done(client, params):
