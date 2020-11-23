@@ -40,7 +40,9 @@ As most players know, the green color has been being pushed by the design team o
 |:--:|
 | *Card frequency in all the registered tournaments* |
 
-The most popular card is the red [Bonecrusher Giant](https://scryfall.com/card/eld/115/bonecrusher-giant-stomp) with 1505 appearances in 37887 cards, followed by [Lovestruck Beast](https://scryfall.com/card/eld/165/lovestruck-beast-hearts-desire) and [Edgewall Inkeeper](https://scryfall.com/card/eld/151/edgewall-innkeeper), both green cards with 1000 and 1100 appearances. In a fourth place comes the red-green [Brushfire Elemental](https://scryfall.com/card/znr/221/brushfire-elemental) with 848 and [Embercleave](https://scryfall.com/card/eld/120/embercleave) in fifth with 815, being the last one above 800.
+The most popular card is the red [Bonecrusher Giant](https://scryfall.com/card/eld/115/bonecrusher-giant-stomp) with 2292 appearances in 51523 total cards in decks, followed by [Lovestruck Beast](https://scryfall.com/card/eld/165/lovestruck-beast-hearts-desire) and [Edgewall Inkeeper](https://scryfall.com/card/eld/151/edgewall-innkeeper), both green cards with 1950 and 1642 appearances. In a fourth place comes the red-green [Brushfire Elemental](https://scryfall.com/card/znr/221/brushfire-elemental) with 1399 and [Ox of Agonas](https://scryfall.com/card/thb/147/ox-of-agonas#) closing the top 5 with 1264.
+
+:bulb: This top 5 is already the **16.5%** of the total cards.
 
 ### Type distribution
 | ![types-square](viz/types_square.png) | 
@@ -51,18 +53,21 @@ The most popular card is the red [Bonecrusher Giant](https://scryfall.com/card/e
 |:--:|
 | *Card types count in all tournaments* |
 
-From 51552 cards registered in tournaments, 16229 were creatures, 9160 nonbasic lands, 7879 instants, 6215 sorceries and 4496 enchantments, with other types below the 2000 each.
+From 51523 cards registered in tournaments, 22678 were creatures, 13109 nonbasic lands, 10263 instants, 8322 sorceries and 6295 enchantments, with other types below the 2500 each.
 
 :bulb: *This gives a clear picture that agresive decks are abundant.*
 
 ### Converted Mana Cost Distribution
 Most spells have a converted mana cost (an integer representing how much mana the spell costs), and in order for a player to interact in time in the game with 
 their opponent, they need to have a "mana curve" fitting the metagame, that is a proper distribution of the mana costs of their spells:
-| ![mana-curve-example](viz/mana_curve_example.png) | 
+| ![mana-curve-example](viz/mana-curve-example.png) | 
 |:--:|
 | *Magic mana curve example filtered by creatures only* |
 
 There is no use of building a deck with powerful cards if you cant play the before turn 5 while your opponent outraces you with cheap creatures.
+| ![cmc_dist](viz/cmc_count.png) |
+|:--:|
+| *Converted mana cost distribution* |
 
 ### Set distribution
 | ![types-square](viz/sets_type_count.png) | 
@@ -85,13 +90,31 @@ So, what of all the attributes of the cards showed before have relation with the
 | *Correlation between variables* |
 
 ### Color
+| ![winner_colors](viz/winner_colors.png) | ![decks_colors](viz/decks_colors.png) | 
+|:--:|:--:|
+| *1st place deck colors* | *Average deck colors by tournament* |
+
+The colors that tend to appear more among first place decks are blue and black, compared to the average. White appears in the same proportions in winner decks and average decks.
+
 ### Type
-### CMC
+| ![winner_types](viz/winner_types_count.png) |
+|:--:|
+| *1st place card types* |
+
 ### Set
-### Rarity
+| ![winner_sets](viz/winner_sets_type_count.png) |
+|:--:|
+| *1st place card types* |
+
+### CMC
+| ![winner_cmc](viz/winner_cmc_count.png) |
+|:--:|
+| *1st place CMC* |
+
+
 ### Price
 | ![deck_prices_by_tournament](viz/avg_winner_price.png) | 
 |:--:|
 | *Average deck prices by tournament* |
-There is a very slight correlation between more expensive decks and better positions.
+There is a very slight inclination for the winning decks to be more expensive.
 
