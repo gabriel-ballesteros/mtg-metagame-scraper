@@ -422,6 +422,82 @@ group by d.id;
     plt.savefig('../viz/winner_colors.png')
 
 
+def plot_winner_types_bar(client):
+    query = '''select case when c.type like '%//%' then SPLIT_PART(SPLIT_PART(c.type,' // ',1),' — ',1 ) else
+SPLIT_PART(c.type,' — ',1) end as basic_type, sum(dc.amount) as amount
+from card as c, deck_card as dc, deck as d
+where c.type not like '%Basic Land%' and d.position = 1
+and c.uuid = dc.card_id and d.id = dc.deck_id
+group by basic_type
+order by 2 desc;'''
+    df = pd.read_sql_query(query, client.engine)
+    types = df.iloc[:, 0].tolist()
+    number = df.iloc[:, 1].tolist()
+    plt.figure(figsize=(12, 8))
+    sns.barplot(y=types, x=number, palette='muted')
+    # set labels
+    # plt.ylabel("Sets", size=15)
+    # plt.ylabel("Card count", size=15)
+    plt.title("Winner card type count", size=18)
+    plt.tight_layout()
+    # ax.set_xticklabels(name)
+    # plt.subplots_adjust(bottom=0.2)
+    plt.grid(axis='x')
+    plt.savefig("../viz/winner_types_count.png", dpi=100)
+
+
+def plot_winner_cmc_count(client):
+    query = '''select
+c.cmc as cmc,sum(dc.amount) as number
+from card as c, deck_card as dc, deck as d
+where c.uuid = dc.card_id and d.id = dc.deck_id
+and d.position = 1
+and case when c.type like '%//%' then SPLIT_PART(SPLIT_PART(c.type,' // ',1),' — ',1 ) else
+SPLIT_PART(c.type,' — ',1) end not like '%Land%'
+group by c.cmc
+order by 1'''
+    df = pd.read_sql_query(query, client.engine)
+    cmcs = df['cmc'].tolist()
+    number = df['number'].tolist()
+    plt.figure(figsize=(12, 8))
+    sns.barplot(x=cmcs, y=number, palette='flare')
+    # set labels
+    # plt.ylabel("Sets", size=15)
+    # plt.ylabel("Card count", size=15)
+    plt.title("Winner card CMC distribution", size=18)
+    plt.grid(axis='y')
+    plt.tight_layout()
+    plt.savefig("../viz/winner_cmc_count.png", dpi=100)
+
+
+def plot_winner_set_type_count(client):
+    query = '''select c.set
+,case when c.type like '%//%' then SPLIT_PART(SPLIT_PART(c.type,' // ',1),' — ',1 ) else
+SPLIT_PART(c.type,' — ',1) end as basic_type
+,sum(dc.amount) as cards
+from card as c, deck_card as dc, deck as d
+where c.uuid = dc.card_id and d.id = dc.deck_id
+and c.type not like '%Basic Land%' and set in ('znr','iko','m21','thb','eld') and d.position=1
+group by c.set, basic_type
+order by 1,2;
+'''
+    df = pd.read_sql_query(query, client.engine)
+    sets = df.iloc[:, 0].tolist()
+    types = df.iloc[:, 1].tolist()
+    number = df.iloc[:, 2].tolist()
+    plt.figure(figsize=(12, 8))
+    sets = [a.upper() for a in sets]
+    # make barplot
+    sns.barplot(x=sets, y=number, hue=types, palette='tab10')
+    # set labels
+    # plt.ylabel("Sets", size=15)
+    # plt.ylabel("Card count", size=15)
+    plt.title("Winner card set count", size=18)
+    plt.grid(axis='y')
+    plt.tight_layout()
+    plt.savefig("../viz/winner_sets_type_count.png", dpi=100)
+
+
 def update(client, params):
     logger.info('CREATING VISUALIZATIONS')
     plot_decks_colors(client)
@@ -436,6 +512,9 @@ def update(client, params):
     plot_winner_price_in_tournament(client)
     plot_correlation(client)
     plot_amount_price_by_rarity(client)
+    plot_winner_types_bar(client)
+    plot_winner_cmc_count(client)
+    plot_winner_set_type_count(client)
 
     logger.info('Created ' + str(len(os.listdir('../viz/')) - 2) + ' visualization figures at ../viz/')
 
